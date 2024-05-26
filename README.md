@@ -29,9 +29,7 @@ Create a .env file in the root of the repository and populate it with the follow
 
 3. **Start the services:**
 
-   ```sh
-   docker-compose up -d
-   ```
+    `docker-compose up -d`
 
 ## Services
 
@@ -47,8 +45,6 @@ After starting the services with docker-compose up -d, the GitLab Runner will be
 
 To stop the services, run:
 
-    ```sh
-    docker-compose down
-    ```
+    `docker-compose down`
 
 This will stop and remove all the containers defined in the docker-compose.yml file.
