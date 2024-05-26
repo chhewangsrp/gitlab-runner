@@ -51,9 +51,9 @@ stages:
 
 build:
   stage: build
-  image: docker:20
   services:
-    - docker:20-dind
+    # Define the Docker-in-Docker service to enable Docker commands within the job.
+    - name: docker:dind
   before_script:
     # Install pip, the package installer for Python
     - apk add --no-cache py3-pip
