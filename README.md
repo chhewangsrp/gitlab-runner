@@ -41,6 +41,37 @@ RUNNER_NAME=your_runner_name  # Replace with your desired runner name
 
 After starting the services with docker-compose up -d, the GitLab Runner will be registered and ready to pick up jobs from your GitLab CI pipelines. Ensure your GitLab CI/CD configuration (.gitlab-ci.yml) is set up to use the runner for executing jobs.
 
+## Example GitLab CI Configuration
+
+Here is an example .gitlab-ci.yml file that installs Docker Compose before running a script:
+
+```yaml
+stages:
+  - build
+
+build:
+  stage: build
+  image: docker:20
+  services:
+    - docker:20-dind
+  before_script:
+    # Install pip, the package installer for Python
+    - apk add --no-cache py3-pip
+    # Install Docker Compose using pip
+    - pip install docker-compose
+    # Verify Docker Compose installation
+    - docker-compose --version
+  script:
+    # Start services defined in the docker-compose.yml file in detached mode
+    - docker-compose up -d
+    # Run a specific service defined in the docker-compose.yml file
+    - docker-compose run your-service-name
+    # Shut down all services defined in the docker-compose.yml file
+    - docker-compose down
+```
+
+#### Note: Installing Docker Compose is crucial for managing multi-container Docker applications and running the services defined in the .gitlab-ci.yml file example.
+
 ## Stopping the Services
 
 To stop the services, run:
