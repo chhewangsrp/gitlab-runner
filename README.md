@@ -12,26 +12,24 @@ This repository contains a `docker-compose` configuration for setting up a GitLa
 
 1. **Clone the repository:**
 
-   ```sh
-   git clone https://github.com/yourusername/your-repo.git
-   cd your-repo
-   ```
+```sh
+git clone https://github.com/yourusername/your-repo.git
+cd your-repo
+```
 
 2. **Configure environment variables:**
 
 Create a .env file in the root of the repository and populate it with the following variables:
 
-    ```sh
-    CI_SERVER_URL=https://gitlab.example.com/  # Replace with your GitLab instance URL
-    REGISTRATION_TOKEN=your_registration_token  # Replace with your GitLab Runner registration token
-    RUNNER_NAME=your_runner_name  # Replace with your desired runner name
-    ```
+```env
+CI_SERVER_URL=https://gitlab.example.com/  # Replace with your GitLab instance URL
+REGISTRATION_TOKEN=your_registration_token  # Replace with your GitLab Runner registration token
+RUNNER_NAME=your_runner_name  # Replace with your desired runner name
+```
 
 3. **Start the services:**
 
-   ```sh
-   docker-compose up -d
-   ```
+`docker-compose up -d`
 
 ## Services
 
@@ -47,8 +45,6 @@ After starting the services with docker-compose up -d, the GitLab Runner will be
 
 To stop the services, run:
 
-    ```sh
-    docker-compose down
-    ```
+`docker-compose down`
 
 This will stop and remove all the containers defined in the docker-compose.yml file.
