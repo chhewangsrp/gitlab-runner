@@ -1,40 +1,40 @@
 version: "3.5"
 
 services:
-  dind:
-    image: docker:20-dind
-    restart: always
-    privileged: true
+  dind: # Docker-in-Docker service to allow nested Docker usage
+    image: docker:20-dind # Use the Docker version 20 image with Docker-in-Docker enabled
+    restart: always # Ensure the service is always restarted in case of failure
+    privileged: true # Run the container in privileged mode to allow Docker daemon to run inside
     environment:
-      DOCKER_TLS_CERTDIR: ""
+      DOCKER_TLS_CERTDIR: "" # Disable TLS for Docker daemon
     command:
-      - --storage-driver=overlay2
+      - --storage-driver=overlay2 # Use overlay2 storage driver for Docker
 
-  runner:
-    restart: always
-    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine
+  runner: # GitLab Runner service to execute CI/CD jobs
+    restart: always # Ensure the service is always restarted in case of failure
+    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine # Use the alpine-based GitLab Runner image
     depends_on:
-      - dind
+      - dind # Ensure dind service is started before this service
     environment:
-      - DOCKER_HOST=tcp://dind:2375
+      - DOCKER_HOST=tcp://dind:2375 # Set Docker host to use Docker-in-Docker service
     volumes:
-      - ./config:/etc/gitlab-runner:z
+      - ./config:/etc/gitlab-runner:z # Mount local config directory to the GitLab Runner configuration directory
 
-  register-runner:
-    restart: "no"
-    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine
+  register-runner: # One-time service to register the GitLab Runner
+    restart: "no" # Do not restart the service after it completes
+    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine # Use the alpine-based GitLab Runner image
     depends_on:
-      - dind
+      - dind # Ensure dind service is started before this service
     environment:
-      - CI_SERVER_URL=${CI_SERVER_URL}
-      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN}
-    command:
+      - CI_SERVER_URL=${CI_SERVER_URL} # GitLab CI server URL (set through environment variable)
+      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN} # Registration token for GitLab Runner (set through environment variable)
+    command: # Command to register the runner with the provided parameters
       - register
-      - --non-interactive
-      - --locked=false
-      - --name=${RUNNER_NAME}
-      - --executor=docker
-      - --docker-image=docker:20-dind
-      - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+      - --non-interactive # Run the registration in non-interactive mode
+      - --locked=false # Allow the runner to pick up any available jobs
+      - --name=${RUNNER_NAME} # Set the runner name (from environment variable)
+      - --executor=docker # Use Docker executor
+      - --docker-image=docker:20-dind # Use Docker-in-Docker image for running jobs
+      - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock # Mount Docker socket for Docker-in-Docker
     volumes:
-      - ./config:/etc/gitlab-runner:z
+      - ./config:/etc/gitlab-runner:z # Mount local config directory to the GitLab Runner configuration directory
